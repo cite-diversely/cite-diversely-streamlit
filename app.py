@@ -205,7 +205,7 @@ def make_results():
     streamlit.plotly_chart(plt2, use_container_width=True)
 
 
-streamlit.title("Welcome, and thank you")
+streamlit.title("Welcome and thanks for coming")
 streamlit.markdown("""Simply put, many people often cite people that are like them. This is a problem because academia has historically been white male dominated, leading to the suppression of marginalized voices. If your citations are biased towards people who look like you, then you are missing out on high-quality work.
     
 Its important to note that using this site is not a replacement for truly being diligent and engaged in citing diverse voices. Rather, this site is just a place to start, and hopefully the first step in your journey of citing more diversely. To learn more about your duty to dismantle institutional oppression through your citation practices, read up here:
@@ -247,6 +247,8 @@ if "bib" in streamlit.session_state:
 
 streamlit.text_area(".bibtex only for now, sorry!", filler, key="bib", height=250)
 details = streamlit.sidebar
+details.markdown("## Model settings")
+details.markdown("The following dropdowns allow you to select the specific gender and ethnicity inferences models.")
 gender_model = details.selectbox("Gender Inference Model", ("gender_guesser", "genderComputer"))
 ethnicity_model = details.selectbox("Ethnicity Inference Model", ("ethnicolr - census data",
                                                                   "ethnicolr - wikipedia data",
