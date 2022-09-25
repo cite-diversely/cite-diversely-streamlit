@@ -174,23 +174,23 @@ def make_results():
 
     col1, col2, col3, col4 = streamlit.columns(4)
     col1.metric("Ethnicity Unknown",
-                     len(data[data['Most Likely Ethnicity'].str.contains('known')]) /
-                     len(data)
+                     "{pct:.0%}".format(pct=100*len(data[data['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(data))
                      )
 
     col2.metric("Gender Unknown",
-                     len(data[data['Most Likely Gender'].str.contains('known|Hard')]) /
-                     len(data)
+                     "{pct:.0%}".format(pct=100*len(data[data['Most Likely Gender'].str.contains('known|Hard')]) /
+                     len(data))
                      )
 
     col3.metric("At Least One Unknown",
-                     len(data[numpy.logical_or(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
-                     len(data)
+                     "{pct:.0%}".format(pct=100*len(data[numpy.logical_or(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
+                     len(data))
                      )
 
     col4.metric("Both Unknown",
-                     len(data[numpy.logical_and(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
-                     len(data)
+                     "{pct:.0%}".format(pct=100*len(data[numpy.logical_and(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
+                     len(data))
                      )
 
 
