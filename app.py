@@ -173,23 +173,23 @@ def make_results():
 
     col1, col2, col3, col4 = streamlit.columns(4)
     col1.metric("Ethnicity Unknown",
-                     len(refs.raw_results[refs.raw_results['Most Likely Ethnicity'].str.contains('known')]) /
-                     len(refs.raw_results)
+                     len(data[data['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(data)
                      )
 
     col2.metric("Gender Unknown",
-                     len(refs.raw_results[refs.raw_results['Most Likely Gender'].str.contains('known|Hard')]) /
-                     len(refs.raw_results)
+                     len(data[data['Most Likely Gender'].str.contains('known|Hard')]) /
+                     len(data)
                      )
 
     col3.metric("At Least One Unknown",
-                     len(refs.raw_results[refs.raw_results['Most Likely Gender'].str.contains('known|Hard') or refs.raw_results['Most Likely Ethnicity'].str.contains('known')]) /
-                     len(refs.raw_results)
+                     len(data[data['Most Likely Gender'].str.contains('known|Hard') or data['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(data)
                      )
 
     col4.metric("Both Unknown",
-                     len(refs.raw_results[refs.raw_results['Most Likely Gender'].str.contains('known|Hard') and refs.raw_results['Most Likely Ethnicity'].str.contains('known')]) /
-                     len(refs.raw_results)
+                     len(data[data['Most Likely Gender'].str.contains('known|Hard') and data['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(data)
                      )
 
 
