@@ -247,6 +247,7 @@ if "bib" in streamlit.session_state:
 
 streamlit.text_area(".bibtex only for now, sorry!", filler, key="bib", height=250)
 details = streamlit.sidebar
+details.markdown("## Settings")
 details.markdown("The following dropdowns allow you to select the specific models that are used for analysis.")
 details.markdown("When it comes to gender inference, you have two models to choose from: [`gender_guesser`](https://github.com/lead-ratings/gender-guesser) (which is primarily trained on European names), and [`genderComputer`](https://github.com/tue-mdse/genderComputer) (which draws on more global data).")
 gender_model = details.selectbox("Gender Inference Model", ("gender_guesser", "genderComputer"))
