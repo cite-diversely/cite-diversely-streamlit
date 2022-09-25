@@ -183,12 +183,12 @@ def make_results():
                      )
 
     col3.metric("At Least One Unknown",
-                     len(data[data['Most Likely Gender'].str.contains('known|Hard') or data['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(data[data['Most Likely Gender'].str.contains('known|Hard') | data['Most Likely Ethnicity'].str.contains('known')]) /
                      len(data)
                      )
 
     col4.metric("Both Unknown",
-                     len(data[data['Most Likely Gender'].str.contains('known|Hard') and data['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(data[data['Most Likely Gender'].str.contains('known|Hard') & data['Most Likely Ethnicity'].str.contains('known')]) /
                      len(data)
                      )
 
