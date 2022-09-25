@@ -37,7 +37,7 @@ class References(object):
             self.raw_results['Most Likely Ethnicity'] = other['race']
         elif ethnicity_model == "ethnicolr - wikipedia data":
             other = ethnicolr.pred_wiki_name(self.raw_results, 'Last Name', 'First Name')
-            self.raw_results['Most Likely Ethnicity'] = other['true_race']
+            self.raw_results['Most Likely Ethnicity'] = other['race']
 
         for i in self.raw_results['Most Likely Ethnicity']:
             self.ethnicity_results[i] = self.ethnicity_results.get(i, 0) + 1
