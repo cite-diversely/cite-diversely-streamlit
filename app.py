@@ -32,13 +32,12 @@ class References(object):
                     self.raw_results.loc[len(self.raw_results.index)] = [name.first, name.last, paper['title']]
 
     def infer_ethnicity(self):
-        if gender_model == "ethnicolr - census data":
+        if ethnicity_model == "ethnicolr - census data":
             other = ethnicolr.pred_census_ln(self.raw_results, 'Last Name', 2010)
             self.raw_results['Most Likely Ethnicity'] = other['race']
-        elif gender_model == "ethnicolr - wikipedia data":
+        elif ethnicity_model == "ethnicolr - wikipedia data":
             other = ethnicolr.pred_wiki_name(self.raw_results, 'Last Name', 'First Name')
             self.raw_results['Most Likely Ethnicity'] = other['true_race']
-
 
         for i in self.raw_results['Most Likely Ethnicity']:
             self.ethnicity_results[i] = self.ethnicity_results.get(i, 0) + 1
