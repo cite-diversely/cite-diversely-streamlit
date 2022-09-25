@@ -1,0 +1,8 @@
+bibtexparser
+gender_guesser
+nameparser
+pandas
+pathlib
+plotly
+streamlit
+streamlit-aggrid
