@@ -49,8 +49,8 @@ class References(object):
                     self.raw_results.loc[len(self.raw_results.index)] = [name.first, name.last, paper['title']]
 
     def infer_ethnicity(self):
-        ethnicolr.census_ln(self.raw_results, 'Last Name', 2010)
-        # Get ethnicity
+        self.raw_results = ethnicolr.census_ln(self.raw_results, 'Last Name', 2010)
+        Get ethnicity
         most_likely_race = []
         for name in self.raw_results['Last Name']:
             if name.upper() in self.ethnicity_lookup:
@@ -58,9 +58,10 @@ class References(object):
                 most_likely_race.append(rr)
             else:
                 most_likely_race.append('race_unknown')
-        self.raw_results['Most Likely Ethnicity'] = most_likely_race
+        self.raw_results['Most Likely Ethnicity'] = self.raw_results['race']
+        self.raw_results.drop(labels=['race', 'pctwhite', 'pctblack', 'pctapi', 'pctaian', 'pct2prace', 'pcthispanic'])
 
-        for i in most_likely_race:
+        for i in self.raw_results['Most Likely Ethnicity']:
             self.ethnicity_results[i] = self.ethnicity_results.get(i, 0) + 1
 
     def infer_gender(self):
