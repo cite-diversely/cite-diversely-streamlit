@@ -188,14 +188,8 @@ def make_results():
     plt2.update_layout(legend=dict(orientation="h"))
     plt3.update_layout(legend=dict(orientation="h"))
 
-    tab1, tab2, tab3 = streamlit.tabs(["Ethnicity", "Gender", "Accuracy"])
-
-    with tab1:
-        streamlit.plotly_chart(plt1, use_container_width=True)
-    with tab2:
-        streamlit.plotly_chart(plt2, use_container_width=True)
-    with tab2:
-        streamlit.plotly_chart(plt3, use_container_width=True)
+    streamlit.plotly_chart(plt1, use_container_width=True)
+    streamlit.plotly_chart(plt2, use_container_width=True)
 
 
 streamlit.title("Welcome, and thank you")
