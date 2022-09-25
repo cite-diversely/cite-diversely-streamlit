@@ -3,15 +3,16 @@
 import types
 
 import bibtexparser
+import ethnicolr
+import genderComputer
 import gender_guesser.detector
 import nameparser
+import numpy
 import pandas
 import plotly.express
-import streamlit
 import st_aggrid
-import genderComputer
-import ethnicolr
-import numpy
+import streamlit
+
 
 class References(object):
     def __init__(self, reference_text):
@@ -73,7 +74,8 @@ class References(object):
                     most_likely_gender.append("first_name_initial")
                 else:
                     most_likely_gender.append(
-                        gc.resolveGender(self.raw_results['First Name'][idx] + " " + self.raw_results['Last Name'][idx], None))
+                        gc.resolveGender(self.raw_results['First Name'][idx] + " " + self.raw_results['Last Name'][idx],
+                                         None))
                     if most_likely_gender[-1] is None:
                         most_likely_gender[-1] = "unknown"
         self.raw_results['Most Likely Gender'] = most_likely_gender
@@ -91,17 +93,17 @@ label_to_gender = {'male': "Very Likely Male",
                    "first_name_initial": "Unknown (first name initial only)"}
 
 label_to_ethnicity = {
-                      'white': 'White',
-                      'black': 'Black',
-                      'api': 'Asian or Pacific Islander',
-                      'hispanic': 'Hispanic',
-                      'pctwhite': 'White',
-                      'pctblack': 'Black',
-                      'pctapi': 'Asian or Pacific Islander',
-                      'pctaian': 'American Indian or Alaskan Native',
-                      'pct2prace': 'Two or more races',
-                      'pcthispanic': 'Hispanic',
-                      'race_unknown': 'Unknown (not found in database)'}
+    'white': 'White',
+    'black': 'Black',
+    'api': 'Asian or Pacific Islander',
+    'hispanic': 'Hispanic',
+    'pctwhite': 'White',
+    'pctblack': 'Black',
+    'pctapi': 'Asian or Pacific Islander',
+    'pctaian': 'American Indian or Alaskan Native',
+    'pct2prace': 'Two or more races',
+    'pcthispanic': 'Hispanic',
+    'race_unknown': 'Unknown (not found in database)'}
 
 ethnicity_to_label = {v: k for k, v in label_to_ethnicity.items()}
 gender_to_label = {v: k for k, v in label_to_gender.items()}
@@ -175,25 +177,28 @@ def make_results():
 
     col1, col2, col3, col4 = streamlit.columns(4)
     col1.metric("Ethnicity Unknown",
-                     "{pct:.0%}".format(pct=len(data[data['Most Likely Ethnicity'].str.contains('known')]) /
-                     len(data))
-                     )
+                "{pct:.0%}".format(pct=len(data[data['Most Likely Ethnicity'].str.contains('known')]) /
+                                       len(data))
+                )
 
     col2.metric("Gender Unknown",
-                     "{pct:.0%}".format(pct=len(data[data['Most Likely Gender'].str.contains('known|Hard')]) /
-                     len(data))
-                     )
+                "{pct:.0%}".format(pct=len(data[data['Most Likely Gender'].str.contains('known|Hard')]) /
+                                       len(data))
+                )
 
     col3.metric("G or E Unknown",
-                     "{pct:.0%}".format(pct=len(data[numpy.logical_or(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
-                     len(data))
-                     )
+                "{pct:.0%}".format(pct=len(data[numpy.logical_or(data['Most Likely Gender'].str.contains('known|Hard'),
+                                                                 data['Most Likely Ethnicity'].str.contains(
+                                                                     'known'))]) /
+                                       len(data))
+                )
 
     col4.metric("G and E Unknown",
-                     "{pct:.0%}".format(pct=len(data[numpy.logical_and(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
-                     len(data))
-                     )
-
+                "{pct:.0%}".format(pct=len(data[numpy.logical_and(data['Most Likely Gender'].str.contains('known|Hard'),
+                                                                  data['Most Likely Ethnicity'].str.contains(
+                                                                      'known'))]) /
+                                       len(data))
+                )
 
     streamlit.plotly_chart(plt1, use_container_width=True)
     streamlit.plotly_chart(plt2, use_container_width=True)
@@ -243,11 +248,9 @@ streamlit.text_area(".bibtex only for now, sorry!", filler, key="bib", height=25
 details = streamlit.sidebar
 gender_model = details.selectbox("Gender Inference Model", ("gender_guesser", "genderComputer"))
 ethnicity_model = details.selectbox("Ethnicity Inference Model", ("ethnicolr - census data",
-                                                  "ethnicolr - wikipedia data",
-                                                  "ethnicolr - North Carolina data",
-                                                  "ethnicolr - Florida registration data"))
-
-
+                                                                  "ethnicolr - wikipedia data",
+                                                                  "ethnicolr - North Carolina data",
+                                                                  "ethnicolr - Florida registration data"))
 
 placeholder = streamlit.empty()
 time_to_analyze = placeholder.button("Analyze")
