@@ -49,7 +49,7 @@ class References(object):
                     self.raw_results.loc[len(self.raw_results.index)] = [name.first, name.last, paper['title']]
 
     def infer_ethnicity(self):
-        self.raw_results = ethnicolr.census_ln(self.raw_results, 'Last Name', 2010)
+        self.raw_results = ethnicolr.pred_census_ln(self.raw_results, 'Last Name', 2010)
         # Get ethnicity
         most_likely_race = []
         for name in self.raw_results['Last Name']:
