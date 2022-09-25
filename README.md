@@ -1,7 +1,7 @@
 ---
 title: Cite Diversely
 emoji: 🎓
-colorFrom: orange
+colorFrom: yellow
 colorTo: gray
 sdk: streamlit
 sdk_version: 1.10.0 # The latest supported version

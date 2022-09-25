@@ -34,7 +34,7 @@ class References(object):
     def infer_ethnicity(self):
         self.raw_results = ethnicolr.pred_census_ln(self.raw_results, 'Last Name', 2010)
         self.raw_results['Most Likely Ethnicity'] = self.raw_results['race']
-        self.raw_results.drop(labels=['race', 'white', 'black', 'hispanic', 'api'])
+        self.raw_results.drop(columns=['race', 'white', 'black', 'hispanic', 'api'])
 
         for i in self.raw_results['Most Likely Ethnicity']:
             self.ethnicity_results[i] = self.ethnicity_results.get(i, 0) + 1
