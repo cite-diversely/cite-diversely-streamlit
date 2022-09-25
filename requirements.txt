@@ -4,5 +4,5 @@ nameparser
 pandas
 pathlib
 plotly
-streamlit
+streamlit>=1.13.0
 streamlit-aggrid
