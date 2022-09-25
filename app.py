@@ -11,6 +11,7 @@ import streamlit
 import st_aggrid
 import genderComputer
 import ethnicolr
+import numpy
 
 class References(object):
     def __init__(self, reference_text):
@@ -183,12 +184,12 @@ def make_results():
                      )
 
     col3.metric("At Least One Unknown",
-                     len(data[data['Most Likely Gender'].str.contains('known|Hard') | data['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(data[numpy.logical_or(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
                      len(data)
                      )
 
     col4.metric("Both Unknown",
-                     len(data[data['Most Likely Gender'].str.contains('known|Hard') & data['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(data[numpy.logical_and(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
                      len(data)
                      )
 

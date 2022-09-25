@@ -7,3 +7,4 @@ streamlit
 streamlit-aggrid
 git+https://github.com/tue-mdse/genderComputer@master
 ethnicolr
+numpy
