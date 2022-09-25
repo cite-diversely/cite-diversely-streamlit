@@ -50,7 +50,7 @@ class References(object):
 
     def infer_ethnicity(self):
         self.raw_results = ethnicolr.census_ln(self.raw_results, 'Last Name', 2010)
-        Get ethnicity
+        # Get ethnicity
         most_likely_race = []
         for name in self.raw_results['Last Name']:
             if name.upper() in self.ethnicity_lookup:
