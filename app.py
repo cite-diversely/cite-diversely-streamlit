@@ -171,7 +171,7 @@ def make_results():
     plt1.update_layout(legend=dict(orientation="h"))
     plt2.update_layout(legend=dict(orientation="h"))
 
-    col1, col2, col3, col4 = streamlit.columns(3)
+    col1, col2, col3, col4 = streamlit.columns(4)
     col1.metric("Ethnicity Unknown",
                      len(refs.raw_results[refs.raw_results['Most Likely Ethnicity'].str.contains('known')]) /
                      len(refs.raw_results)
@@ -182,12 +182,12 @@ def make_results():
                      len(refs.raw_results)
                      )
 
-    col2.metric("At Least One Unknown",
+    col3.metric("At Least One Unknown",
                      len(refs.raw_results[refs.raw_results['Most Likely Gender'].str.contains('known|Hard') or refs.raw_results['Most Likely Ethnicity'].str.contains('known')]) /
                      len(refs.raw_results)
                      )
 
-    col2.metric("Both Unknown",
+    col4.metric("Both Unknown",
                      len(refs.raw_results[refs.raw_results['Most Likely Gender'].str.contains('known|Hard') and refs.raw_results['Most Likely Ethnicity'].str.contains('known')]) /
                      len(refs.raw_results)
                      )
