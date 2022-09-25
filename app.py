@@ -168,14 +168,19 @@ def make_results():
         values=refs.gender_results.values(),
         hole=0.5,
     )
-    plt3 = plotly.express.pie(
-        names=list(refs.gender_results.keys()),
-        values=refs.gender_results.values(),
-        hole=0.5,
-    )
     plt1.update_layout(legend=dict(orientation="h"))
     plt2.update_layout(legend=dict(orientation="h"))
-    plt3.update_layout(legend=dict(orientation="h"))
+
+
+    streamlit.metric("Ethnicity Unknown",
+                     len(refs.raw_results[refs.raw_results['Most Likely Ethnicity'].str.contains('known')]) /
+                     len(refs.raw_results)
+                     )
+
+    streamlit.metric("Gender Unknown",
+                     len(refs.raw_results[refs.raw_results['Most Likely Gender'].str.contains('known|Hard')]) /
+                     len(refs.raw_results)
+                     )
 
     streamlit.plotly_chart(plt1, use_container_width=True)
     streamlit.plotly_chart(plt2, use_container_width=True)
