@@ -3,12 +3,9 @@
 import types
 
 import bibtexparser
-import csv
 import gender_guesser.detector
 import nameparser
-import operator
 import pandas
-import pathlib
 import plotly.express
 import streamlit
 import st_aggrid
@@ -24,20 +21,6 @@ class References(object):
         self.ethnicity_results = {key: 0 for key in self.race_options}
         self.raw_results = pandas.DataFrame(columns=["First Name", "Last Name", "Title"])
 
-        csv_path = pathlib.Path(__file__).parent / 'data' / 'Names_2010Census.csv'
-
-        self.ethnicity_lookup = {}
-        with open(csv_path) as csv_file:
-            reader = csv.DictReader(csv_file)
-            for row in reader:
-                self.ethnicity_lookup[row['name']] = {}
-                for race in self.race_options[:-1]:
-                    try:
-                        value = float(row[race])
-                    except ValueError:
-                        value = 0
-                    self.ethnicity_lookup[row['name']][race] = value
-
         # Parse names from input
         self.reference_text = reference_text
         self.references = bibtexparser.loads(reference_text)
@@ -50,16 +33,8 @@ class References(object):
 
     def infer_ethnicity(self):
         self.raw_results = ethnicolr.pred_census_ln(self.raw_results, 'Last Name', 2010)
-        # Get ethnicity
-        most_likely_race = []
-        for name in self.raw_results['Last Name']:
-            if name.upper() in self.ethnicity_lookup:
-                rr = max(self.ethnicity_lookup[name.upper()].items(), key=operator.itemgetter(1))[0]
-                most_likely_race.append(rr)
-            else:
-                most_likely_race.append('race_unknown')
         self.raw_results['Most Likely Ethnicity'] = self.raw_results['race']
-        # self.raw_results.drop(labels=['race', 'pctwhite', 'pctblack', 'pctapi', 'pctaian', 'pct2prace', 'pcthispanic'])
+        self.raw_results.drop(labels=['race', 'white', 'black', 'hispanic', 'api'])
 
         for i in self.raw_results['Most Likely Ethnicity']:
             self.ethnicity_results[i] = self.ethnicity_results.get(i, 0) + 1
@@ -98,7 +73,12 @@ label_to_gender = {'male': "Very Likely Male",
                    "unknown": "Unknown (model inconclusive)",
                    "first_name_initial": "Unknown (first name initial only)"}
 
-label_to_ethnicity = {'pctwhite': 'White',
+label_to_ethnicity = {
+                      'white': 'White',
+                      'black': 'Black',
+                      'api': 'Asian or Pacific Islander',
+                      'hispanic': 'Hispanic',
+                      'pctwhite': 'White',
                       'pctblack': 'Black',
                       'pctapi': 'Asian or Pacific Islander',
                       'pctaian': 'American Indian or Alaskan Native',
