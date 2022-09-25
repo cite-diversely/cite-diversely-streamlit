@@ -7,14 +7,12 @@ import csv
 import gender_guesser.detector
 import nameparser
 import operator
-import os
 import pandas
 import pathlib
-import pickle
 import plotly.express
 import streamlit
 import st_aggrid
-
+import genderComputer
 
 class References(object):
     def __init__(self, reference_text):
@@ -23,70 +21,68 @@ class References(object):
         self.gender_results = {key: 0 for key in self.gender_options}
         self.race_options = ['pctwhite', 'pctblack', 'pctapi', 'pctaian', 'pct2prace', 'pcthispanic', 'race_unknown']
         self.ethnicity_results = {key: 0 for key in self.race_options}
-        self.raw_results = {}
+        self.raw_results = pandas.DataFrame(columns=["First Name", "Last Name", "Title"])
 
-        pickle_path = pathlib.Path(__file__).parent / 'data' / 'ethnicity_lookup.p'
         csv_path = pathlib.Path(__file__).parent / 'data' / 'Names_2010Census.csv'
 
-        # Load data
-        if os.path.isfile(pickle_path):
-            self.ethnicity_lookup = pickle.load(open(pickle_path, 'rb'))
-        else:
-            self.ethnicity_lookup = {}
-            with open(csv_path) as csv_file:
-                reader = csv.DictReader(csv_file)
-                for row in reader:
-                    self.ethnicity_lookup[row['name']] = {}
-                    for race in self.race_options[:-1]:
-                        try:
-                            value = float(row[race])
-                        except ValueError:
-                            value = 0
-                        self.ethnicity_lookup[row['name']][race] = value
-            pickle.dump(self.ethnicity_lookup, open(pickle_path, 'wb'))
+        self.ethnicity_lookup = {}
+        with open(csv_path) as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                self.ethnicity_lookup[row['name']] = {}
+                for race in self.race_options[:-1]:
+                    try:
+                        value = float(row[race])
+                    except ValueError:
+                        value = 0
+                    self.ethnicity_lookup[row['name']][race] = value
 
         # Parse names from input
         self.reference_text = reference_text
         self.references = bibtexparser.loads(reference_text)
-        self.first_names = []
-        self.last_names = []
-        self.raw_results = {'title': []}
         for paper in self.references.entries:
             if "author" in paper:
                 authors = paper["author"].split(' and ')
                 for person in authors:
-                    self.raw_results['title'].append(paper['title'])
                     name = nameparser.HumanName(person)
-                    self.first_names.append(name.first)
-                    self.last_names.append(name.last)
-        self.raw_results['first_name'] = self.first_names
-        self.raw_results['last_name'] = self.last_names
+                    self.raw_results.loc[len(self.raw_results.index)] = [name.first, name.last, paper['title']]
 
     def infer_ethnicity(self):
         # Get ethnicity
         most_likely_race = []
-        for name in self.last_names:
+        for name in self.raw_results['Last Name']:
             if name.upper() in self.ethnicity_lookup:
                 rr = max(self.ethnicity_lookup[name.upper()].items(), key=operator.itemgetter(1))[0]
                 most_likely_race.append(rr)
             else:
                 most_likely_race.append('race_unknown')
-        self.raw_results['most_likely_race'] = most_likely_race
+        self.raw_results['Most Likely Ethnicity'] = most_likely_race
 
         for i in most_likely_race:
             self.ethnicity_results[i] = self.ethnicity_results.get(i, 0) + 1
 
     def infer_gender(self):
-        # Get gender
-        most_likely_gender = []
-        d = gender_guesser.detector.Detector()
-        for name in self.first_names:
-            if (len(name) == 2 and name[1] == '.') or len(name) == 1:
-                most_likely_gender.append("first_name_initial")
-            else:
-                most_likely_gender.append(d.get_gender(name))
-        self.raw_results['most_likely_gender'] = most_likely_gender
 
+        most_likely_gender = []
+        if gender_model == "gender_guesser":
+            d = gender_guesser.detector.Detector()
+            for name in self.raw_results['First Name']:
+                if (len(name) == 2 and name[1] == '.') or len(name) == 1:
+                    most_likely_gender.append("first_name_initial")
+                else:
+                    most_likely_gender.append(d.get_gender(name))
+        elif gender_model == "genderComputer":
+            gc = genderComputer.GenderComputer()
+            for idx in self.raw_results.index:
+                fn = self.raw_results['First Name'][idx]
+                if (len(fn) == 2 and fn[1] == '.') or len(fn) == 1:
+                    most_likely_gender.append("first_name_initial")
+                else:
+                    most_likely_gender.append(
+                        gc.resolveGender(self.raw_results['First Name'][idx] + " " + self.raw_results['Last Name'][idx], None))
+                    if most_likely_gender[-1] is None:
+                        most_likely_gender[-1] = "unknown"
+        self.raw_results['Most Likely Gender'] = most_likely_gender
         for i in most_likely_gender:
             self.gender_results[i] = self.gender_results.get(i, 0) + 1
 
@@ -119,13 +115,9 @@ def make_table():
         refs.infer_gender()
         refs.infer_ethnicity()
 
-        df = pandas.DataFrame(refs.raw_results["first_name"], columns=["First Name"])
-        df = df.join(pandas.DataFrame(refs.raw_results["last_name"], columns=["Last Name"]))
-        df = df.join(pandas.DataFrame([label_to_ethnicity[x] for x in refs.raw_results["most_likely_race"]],
-                                      columns=["Most Likely Ethnicity"]))
-        df = df.join(pandas.DataFrame([label_to_gender[x] for x in refs.raw_results["most_likely_gender"]],
-                                      columns=["Most Likely Gender"]))
-        df = df.join(pandas.DataFrame(refs.raw_results["title"], columns=["Title"]))
+        df = refs.raw_results
+        df = df.replace({"Most Likely Ethnicity": label_to_ethnicity})
+        df = df.replace({"Most Likely Gender": label_to_gender})
         df = df.sort_values(["Last Name", "First Name"])
         df = df.reset_index(drop=True)
 
@@ -147,8 +139,6 @@ def make_table():
     gb.configure_column('Title',
                         editable=False
                         )
-
-    # gb.configure_grid_options(enableRangeSelection=True)
 
     response = st_aggrid.AgGrid(
         data=df,
@@ -234,8 +224,8 @@ if "bib" in streamlit.session_state:
 
 streamlit.text_area(".bibtex only for now, sorry!", filler, key="bib", height=250)
 details = streamlit.sidebar
-details.selectbox("Gender Inference Model", ("gender_guesser", "genderComputer"))
-details.selectbox("Ethnicity Inference Model", ("ethnicolr - census data",
+gender_model = details.selectbox("Gender Inference Model", ("gender_guesser", "genderComputer"))
+ethnicity_model = details.selectbox("Ethnicity Inference Model", ("ethnicolr - census data",
                                                   "ethnicolr - wikipedia data",
                                                   "ethnicolr - North Carolina data",
                                                   "ethnicolr - Florida registration data"))
@@ -253,11 +243,5 @@ if time_to_analyze or 'already_analyzed' in streamlit.session_state:
                             """)
         make_table()
 
-        placeholder2 = streamlit.empty()
-        time_to_plot = placeholder2.button("Plot")
-        if time_to_plot or 'already_plotted' in streamlit.session_state:
-            streamlit.session_state['already_plotted'] = True
-            placeholder2.empty()
-            with streamlit.spinner("Plotting..."):
-                streamlit.markdown("These tabs summarize your results with a variety of visualizations and statistics.")
-                make_results()
+        streamlit.markdown("These tabs summarize your results with a variety of visualizations and statistics.")
+        make_results()

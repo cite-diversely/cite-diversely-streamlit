@@ -4,5 +4,6 @@ nameparser
 pandas
 pathlib
 plotly
-streamlit>=1.13.0
+streamlit
 streamlit-aggrid
+git+https://github.com/tue-mdse/genderComputer@master
