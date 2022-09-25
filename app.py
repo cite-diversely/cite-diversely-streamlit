@@ -44,10 +44,12 @@ class References(object):
         elif ethnicity_model == "ethnicolr - Florida registration data":
             other = ethnicolr.pred_fl_reg_name_five_cat(self.raw_results, 'Last Name', 'First Name')
             self.raw_results['Most Likely Ethnicity'] = other['race']
+            self.raw_results.drop(columns=['__name'])
 
         elif ethnicity_model == "ethnicolr - North Carolina data":
             other = ethnicolr.pred_nc_reg_name(self.raw_results, 'Last Name', 'First Name')
             self.raw_results['Most Likely Ethnicity'] = other['race']
+            self.raw_results.drop(columns=['__name'])
 
         for i in self.raw_results['Most Likely Ethnicity']:
             self.ethnicity_results[i] = self.ethnicity_results.get(i, 0) + 1
@@ -140,6 +142,7 @@ def make_table():
         data=df,
         gridOptions=gb.build(),
         fit_columns_on_grid_load=True,
+        height=400,
     )
 
     streamlit.session_state['table_data'] = response.data
