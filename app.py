@@ -247,9 +247,10 @@ if "bib" in streamlit.session_state:
 
 streamlit.text_area(".bibtex only for now, sorry!", filler, key="bib", height=250)
 details = streamlit.sidebar
-details.markdown("## Model settings")
-details.markdown("The following dropdowns allow you to select the specific gender and ethnicity inferences models.")
+details.markdown("The following dropdowns allow you to select the specific models that are used for analysis.")
+details.markdown("When it comes to gender inference, you have two models to choose from: [`gender_guesser`](https://github.com/lead-ratings/gender-guesser) (which is primarily trained on European names), and [`genderComputer`](https://github.com/tue-mdse/genderComputer) (which draws on more global data).")
 gender_model = details.selectbox("Gender Inference Model", ("gender_guesser", "genderComputer"))
+details.markdown("The ethnicity inference models are all drawn from the [`ethnicolr`](https://github.com/appeler/ethnicolr) library. The `census` option performs ethnicity lookup using U.S. Census data; `wikipedia` uses a model trained on data from wikipedia, and provides deatiled classification; `North Carolina` provides a similarly deatiled classification based on North Carolina registration data; finally `Florida` provides a coarse classification based on Florida registration data.")
 ethnicity_model = details.selectbox("Ethnicity Inference Model", ("ethnicolr - census data",
                                                                   "ethnicolr - wikipedia data",
                                                                   "ethnicolr - North Carolina data",
