@@ -59,7 +59,7 @@ class References(object):
             else:
                 most_likely_race.append('race_unknown')
         self.raw_results['Most Likely Ethnicity'] = self.raw_results['race']
-        self.raw_results.drop(labels=['race', 'pctwhite', 'pctblack', 'pctapi', 'pctaian', 'pct2prace', 'pcthispanic'])
+        # self.raw_results.drop(labels=['race', 'pctwhite', 'pctblack', 'pctapi', 'pctaian', 'pct2prace', 'pcthispanic'])
 
         for i in self.raw_results['Most Likely Ethnicity']:
             self.ethnicity_results[i] = self.ethnicity_results.get(i, 0) + 1
