@@ -84,6 +84,7 @@ class References(object):
 label_to_gender = {'male': "Very Likely Male",
                    'mostly_male': "Likely Male",
                    'andy': "Hard to Tell",
+                   'unisex': "Hard to Tell",
                    'mostly_female': "Likely Female",
                    "female": "Very Likely Female",
                    "unknown": "Unknown (model inconclusive)",
@@ -125,13 +126,13 @@ def make_table():
 
     gb.configure_column('Most Likely Ethnicity',
                         cellEditor='agRichSelectCellEditor',
-                        cellEditorParams={'values': list(label_to_ethnicity.values())},
+                        cellEditorParams={'values': numpy.unique(list(label_to_ethnicity.values()))},
                         cellEditorPopup=True
                         )
 
     gb.configure_column('Most Likely Gender',
                         cellEditor='agRichSelectCellEditor',
-                        cellEditorParams={'values': list(label_to_gender.values())},
+                        cellEditorParams={'values': numpy.unique(list(label_to_gender.values()))},
                         cellEditorPopup=True
                         )
 
@@ -174,22 +175,22 @@ def make_results():
 
     col1, col2, col3, col4 = streamlit.columns(4)
     col1.metric("Ethnicity Unknown",
-                     "{pct:.0%}".format(pct=100*len(data[data['Most Likely Ethnicity'].str.contains('known')]) /
+                     "{pct:.0%}".format(pct=len(data[data['Most Likely Ethnicity'].str.contains('known')]) /
                      len(data))
                      )
 
     col2.metric("Gender Unknown",
-                     "{pct:.0%}".format(pct=100*len(data[data['Most Likely Gender'].str.contains('known|Hard')]) /
+                     "{pct:.0%}".format(pct=len(data[data['Most Likely Gender'].str.contains('known|Hard')]) /
                      len(data))
                      )
 
-    col3.metric("At Least One Unknown",
-                     "{pct:.0%}".format(pct=100*len(data[numpy.logical_or(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
+    col3.metric("G or E Unknown",
+                     "{pct:.0%}".format(pct=len(data[numpy.logical_or(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
                      len(data))
                      )
 
-    col4.metric("Both Unknown",
-                     "{pct:.0%}".format(pct=100*len(data[numpy.logical_and(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
+    col4.metric("G and E Unknown",
+                     "{pct:.0%}".format(pct=len(data[numpy.logical_and(data['Most Likely Gender'].str.contains('known|Hard'), data['Most Likely Ethnicity'].str.contains('known'))]) /
                      len(data))
                      )
 
