@@ -35,10 +35,12 @@ class References(object):
         if ethnicity_model == "ethnicolr - census data":
             other = ethnicolr.pred_census_ln(self.raw_results, 'Last Name', 2010)
             self.raw_results['Most Likely Ethnicity'] = other['race']
+
         elif ethnicity_model == "ethnicolr - wikipedia data":
             other = ethnicolr.pred_wiki_name(self.raw_results, 'Last Name', 'First Name')
             self.raw_results['Most Likely Ethnicity'] = other['race']
             self.raw_results.drop(columns=['__name'])
+
         elif ethnicity_model == "ethnicolr - Florida registration data":
             other = ethnicolr.pred_fl_reg_name_five_cat(self.raw_results, 'Last Name', 'First Name')
             self.raw_results['Most Likely Ethnicity'] = other['race']
