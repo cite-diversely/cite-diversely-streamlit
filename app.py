@@ -128,13 +128,13 @@ def make_table():
 
     gb.configure_column('Most Likely Ethnicity',
                         cellEditor='agRichSelectCellEditor',
-                        cellEditorParams={'values': numpy.unique(list(label_to_ethnicity.values()))},
+                        cellEditorParams={'values': list(label_to_ethnicity.values())},
                         cellEditorPopup=True
                         )
 
     gb.configure_column('Most Likely Gender',
                         cellEditor='agRichSelectCellEditor',
-                        cellEditorParams={'values': numpy.unique(list(label_to_gender.values()))},
+                        cellEditorParams={'values': list(label_to_gender.values())},
                         cellEditorPopup=True
                         )
 
