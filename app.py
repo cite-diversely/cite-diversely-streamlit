@@ -146,6 +146,7 @@ def make_table():
         data=df,
         gridOptions=gb.build(),
         fit_columns_on_grid_load=True,
+        update_mode=st_aggrid.GridUpdateMode.VALUE_CHANGED,
         height=400,
     )
 
