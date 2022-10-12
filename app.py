@@ -270,3 +270,8 @@ if time_to_analyze or 'already_analyzed' in streamlit.session_state:
 
         streamlit.markdown("These tabs summarize your results with a variety of visualizations and statistics.")
         make_results()
+
+
+# 1. ArXiV recommendations
+# 2. Base normative recomenndations on the average US population (make this a toggle?)
+# 3. Add this too: https://github.com/malev/gender-detector
